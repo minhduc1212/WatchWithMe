@@ -11,6 +11,7 @@ let remoteActionPause = false;
 let remoteActionSeek = false;
 let nickname = localStorage.getItem("wwm_nickname") || "Viewer " + Math.floor(Math.random() * 1000);
 let heartbeatInterval = null;
+let tunnelPollInterval = null;
 
 // UI Element selectors
 const viewDashboard = document.getElementById("view-dashboard");
@@ -271,8 +272,53 @@ async function joinRoom(roomId) {
     document.getElementById("room-sidebar").classList.remove("hidden");
     document.querySelector(".share-link-box").classList.remove("hidden");
     
-    let inviteUrl = `${window.location.origin}/#room=${roomId}`;
-    document.getElementById("room-share-url").value = inviteUrl;
+    let tunnelUrl = null;
+    let localInviteUrl = `${window.location.origin}/#room=${roomId}`;
+    
+    const shareInput = document.getElementById("room-share-url");
+    const shareTypeSelect = document.getElementById("room-share-type");
+    const optionInternet = document.getElementById("option-internet-link");
+    
+    // Default setup
+    shareTypeSelect.value = "local";
+    shareInput.value = localInviteUrl;
+    optionInternet.disabled = true;
+    optionInternet.textContent = "Internet Link (Checking...)";
+    
+    shareTypeSelect.onchange = () => {
+        if (shareTypeSelect.value === "local") {
+            shareInput.value = localInviteUrl;
+        } else if (shareTypeSelect.value === "internet" && tunnelUrl) {
+            shareInput.value = `${tunnelUrl}/#room=${roomId}`;
+        }
+    };
+
+    // Poll tunnel URL status
+    if (tunnelPollInterval) clearInterval(tunnelPollInterval);
+    
+    const checkTunnel = async () => {
+        try {
+            const res = await fetch("/api/tunnel");
+            const data = await res.json();
+            if (data.url) {
+                tunnelUrl = data.url;
+                optionInternet.disabled = false;
+                optionInternet.textContent = "Internet Link (Online)";
+                
+                // If page was loaded via a trycloudflare link, default the selector to internet
+                if (window.location.origin.includes("trycloudflare.com")) {
+                    shareTypeSelect.value = "internet";
+                    shareInput.value = `${tunnelUrl}/#room=${roomId}`;
+                }
+                clearInterval(tunnelPollInterval);
+            }
+        } catch (e) {
+            console.error("Error checking tunnel status:", e);
+        }
+    };
+    
+    checkTunnel();
+    tunnelPollInterval = setInterval(checkTunnel, 3000);
     
     
     // Clear chat messages
@@ -503,6 +549,10 @@ function leaveRoom(clearHash = true) {
     if (heartbeatInterval) {
         clearInterval(heartbeatInterval);
         heartbeatInterval = null;
+    }
+    if (tunnelPollInterval) {
+        clearInterval(tunnelPollInterval);
+        tunnelPollInterval = null;
     }
     if (currentSocket) {
         currentSocket.close();

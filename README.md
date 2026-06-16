@@ -39,7 +39,7 @@ WatchWithMe/
 1. **Self-Hosted Library:** Upload files (MP4, MKV, AVI, etc.) directly. The backend automatically probes video info, extracts duration, and displays them in a modern dashboard.
 2. **Track Selector & Packaging:** Extract internal audio tracks and subtitle tracks during the HLS packaging process.
 3. **HTTP Byte-Range HLS Streaming:** Streams are encoded into standard single-file HLS segments, served via a custom Range request handler to allow instant skipping/scrubbing without freezing.
-4. **Synchronized Co-Watching (Watch Together):** Create shared rooms where playback states (play, pause, timeline skip) synchronize instantly between viewers via WebSockets.
+4. **Synchronized Co-Watching (Watch Together):** Create shared rooms where playback states (play, pause, timeline skip) synchronize instantly between viewers. Features auto-initialized Cloudflare Quick Tunnels to seamlessly expose your session to friends over the internet with zero configuration.
 5. **Precision Sync Locks:** Uses flag-based programmatic event isolation to prevent feedback loops and stutters while maintaining zero command latency.
 
 ---
@@ -103,6 +103,8 @@ Make sure you have [FFmpeg](https://ffmpeg.org/) installed and added to your sys
 
 ### Watching Together with Friends
 1. Hover over the processed movie card and click **Watch Together**.
-2. Copy the shareable invite link generated in the top-right corner of the room bar and send it to other local-network viewers.
+2. Copy the shareable invite link generated in the top-right corner of the room bar and send it to viewers.
+   - **Local Link:** For users on the same local network/Wi-Fi.
+   - **Internet Link:** For users over the internet. A secure Cloudflare Quick Tunnel is automatically created in the background, allowing friends anywhere in the world to join without any firewall, port forwarding, or configuration.
 3. Once others open the link in their browsers, they will connect to the room.
 4. Clicking play, pause, or seeking the timeline will immediately synchronize the video stream state across all connected viewers in real time.

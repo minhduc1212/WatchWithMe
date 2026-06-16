@@ -85,6 +85,10 @@
 
                 <div class="room-info-right">
                     <div class="share-link-box">
+                        <select id="room-share-type" class="share-select">
+                            <option value="local">Local Link</option>
+                            <option value="internet" id="option-internet-link" disabled>Internet Link (Offline)</option>
+                        </select>
                         <input type="text" id="room-share-url" readonly class="share-link-input">
                         <button id="btn-copy-room-link" class="btn-copy">
                             <i class="ph-bold ph-copy"></i>

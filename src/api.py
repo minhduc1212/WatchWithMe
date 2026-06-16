@@ -8,6 +8,8 @@ from fastapi.responses import FileResponse, StreamingResponse
 from src.config import TEMP_DIR, MEDIA_DIR, logger
 from src.database import get_db
 from src.utils import get_video_info, process_video_task, srt_to_vtt
+from src.tunnel import get_tunnel_url
+
 
 router = APIRouter()
 
@@ -318,3 +320,8 @@ def delete_movie(movie_id: int):
     
     logger.info(f"Movie ID {movie_id} and all related disk files deleted successfully.")
     return {"message": "Movie deleted successfully"}
+
+@router.get("/api/tunnel")
+def get_tunnel_endpoint():
+    return {"url": get_tunnel_url()}
+

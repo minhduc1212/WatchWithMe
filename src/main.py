@@ -1,4 +1,6 @@
 import logging
+import os
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -6,14 +8,22 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.database import init_db
 from src.websocket import manager
 from src.api import router as api_router
+from src.tunnel import start_tunnel, stop_tunnel
 
 logger = logging.getLogger("WatchWithMe.Main")
 
 # Initialize SQLite database and perform migrations
 init_db()
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    port = int(os.environ.get("PORT", 8000))
+    start_tunnel(port=port)
+    yield
+    stop_tunnel()
+
 # Initialize FastAPI App
-app = FastAPI(title="WatchWithMe")
+app = FastAPI(title="WatchWithMe", lifespan=lifespan)
 
 # Allow CORS for dev ease
 app.add_middleware(
