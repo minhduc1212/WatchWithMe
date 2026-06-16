@@ -814,23 +814,51 @@ textarea.form-control {
     border-radius: var(--radius-md);
 }
 
-.share-select {
-    background: transparent;
-    color: var(--text-primary);
-    border: none;
-    outline: none;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 0 4px 0 8px;
-    cursor: pointer;
-    border-right: 1px solid var(--border-color);
-    margin-right: 4px;
-    height: 24px;
+.share-tabs {
+    display: flex;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    padding: 3px;
+    border-radius: var(--radius-md);
+    gap: 4px;
 }
 
-.share-select option {
-    background: var(--bg-surface);
+.share-tab {
+    background: transparent;
+    color: var(--text-secondary);
+    border: none;
+    outline: none;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: var(--transition-smooth);
+    white-space: nowrap;
+}
+
+.share-tab i {
+    font-size: 14px;
+}
+
+.share-tab:hover:not(:disabled) {
     color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.share-tab.active {
+    color: #fff;
+    background: var(--accent);
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.4);
+}
+
+.share-tab:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    color: var(--text-muted);
 }
 
 .share-link-input {

@@ -84,11 +84,17 @@
                 </div>
 
                 <div class="room-info-right">
+                    <div class="share-tabs">
+                        <button type="button" id="tab-share-local" class="share-tab active">
+                            <i class="ph ph-lan"></i>
+                            <span>Local Link</span>
+                        </button>
+                        <button type="button" id="tab-share-internet" class="share-tab" disabled>
+                            <i class="ph ph-globe"></i>
+                            <span id="tab-internet-text">Internet Link (Offline)</span>
+                        </button>
+                    </div>
                     <div class="share-link-box">
-                        <select id="room-share-type" class="share-select">
-                            <option value="local">Local Link</option>
-                            <option value="internet" id="option-internet-link" disabled>Internet Link (Offline)</option>
-                        </select>
                         <input type="text" id="room-share-url" readonly class="share-link-input">
                         <button id="btn-copy-room-link" class="btn-copy">
                             <i class="ph-bold ph-copy"></i>

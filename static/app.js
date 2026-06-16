@@ -276,21 +276,30 @@ async function joinRoom(roomId) {
     let localInviteUrl = `${window.location.origin}/#room=${roomId}`;
     
     const shareInput = document.getElementById("room-share-url");
-    const shareTypeSelect = document.getElementById("room-share-type");
-    const optionInternet = document.getElementById("option-internet-link");
+    const tabLocal = document.getElementById("tab-share-local");
+    const tabInternet = document.getElementById("tab-share-internet");
+    const tabInternetText = document.getElementById("tab-internet-text");
     
     // Default setup
-    shareTypeSelect.value = "local";
+    tabLocal.classList.add("active");
+    tabInternet.classList.remove("active");
+    tabInternet.disabled = true;
+    tabInternetText.textContent = "Internet Link (Checking...)";
     shareInput.value = localInviteUrl;
-    optionInternet.disabled = true;
-    optionInternet.textContent = "Internet Link (Checking...)";
     
-    shareTypeSelect.onchange = () => {
-        if (shareTypeSelect.value === "local") {
-            shareInput.value = localInviteUrl;
-        } else if (shareTypeSelect.value === "internet" && tunnelUrl) {
-            shareInput.value = `${tunnelUrl}/#room=${roomId}`;
-        }
+    // Switch to Local Tab
+    tabLocal.onclick = () => {
+        tabLocal.classList.add("active");
+        tabInternet.classList.remove("active");
+        shareInput.value = localInviteUrl;
+    };
+    
+    // Switch to Internet Tab
+    tabInternet.onclick = () => {
+        if (!tunnelUrl) return;
+        tabInternet.classList.add("active");
+        tabLocal.classList.remove("active");
+        shareInput.value = `${tunnelUrl}/#room=${roomId}`;
     };
 
     // Poll tunnel URL status
@@ -302,12 +311,13 @@ async function joinRoom(roomId) {
             const data = await res.json();
             if (data.url) {
                 tunnelUrl = data.url;
-                optionInternet.disabled = false;
-                optionInternet.textContent = "Internet Link (Online)";
+                tabInternet.disabled = false;
+                tabInternetText.textContent = "Internet Link";
                 
-                // If page was loaded via a trycloudflare link, default the selector to internet
+                // If page was loaded via a trycloudflare link, default the active tab to internet
                 if (window.location.origin.includes("trycloudflare.com")) {
-                    shareTypeSelect.value = "internet";
+                    tabInternet.classList.add("active");
+                    tabLocal.classList.remove("active");
                     shareInput.value = `${tunnelUrl}/#room=${roomId}`;
                 }
                 clearInterval(tunnelPollInterval);
